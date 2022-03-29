@@ -1,0 +1,3 @@
+spec:
+  storageClassDevices:
+    devicePaths: /dev/sdc
