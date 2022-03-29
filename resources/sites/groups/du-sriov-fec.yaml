@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: du-sriov-fec
+  namespace: openshift-gitops
+spec:
+  generators:
+  - list:
+      # Parameters are generated based on this cluster list, to be substituted
+      # into the template below.
+      elements:
+      - cluster: du-sno-3
+        url: https://api.du-sno-3.domain.example.com:6443
+      - cluster: du-sno-2
+        url: https://api.du-sno-2.domain.example.com:6443
+  template:
+    # An Argo CD Application template, with support for parameter substitution
+    # with values from parameters generated above.
+    metadata:
+      name: '{{cluster}}-du-sriov-fec'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/vhernandomartin/gitops-blueprints-orchestration.git
+        targetRevision: HEAD
+        path: resources/operators/sriov-fec
+      destination:
+        server: '{{url}}'
+        namespace: vran-acceleration-operators
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
