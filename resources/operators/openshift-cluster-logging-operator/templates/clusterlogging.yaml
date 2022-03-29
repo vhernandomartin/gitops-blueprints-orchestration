@@ -1,0 +1,20 @@
+apiVersion: "logging.openshift.io/v1"
+kind: "ClusterLogging"
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "5"
+  name: "instance"
+  namespace: "openshift-logging"
+spec:
+  managementState: "Managed"
+  collection:
+    logs:
+      type: "fluentd"
+      fluentd:
+        resources:
+          limits:
+            memory: {{ .Values.spec.collection.logs.fluentd.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.spec.collection.logs.fluentd.resources.requests.cpu }}
+            memory: {{ .Values.spec.collection.logs.fluentd.resources.requests.memory }}

@@ -1,0 +1,10 @@
+spec:
+  collection:
+    logs:
+      fluentd:
+        resources:
+          limits:
+            memory: 736Mi
+          requests:
+            cpu: 100m
+            memory: 736Mi
