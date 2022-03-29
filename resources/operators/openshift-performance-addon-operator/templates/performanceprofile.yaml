@@ -1,0 +1,33 @@
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "5"
+    kubeletconfig.experimental: |
+      {"allowedUnsafeSysctls":["kernel.msg*", "net.ipv4.ip_local_port_range", "net.core.somaxconn", "net.ipv6.conf.all.accept_ra", "net.ipv6.conf.default.accept_ra", "net.ipv6.conf.all.disable_ipv6"]}
+  name: openshift-node-performance-profile
+spec:
+  additionalKernelArgs:
+    - idle=poll
+    - rcupdate.rcu_normal_after_boot=0
+    - nohz_full=2-31,34-63
+    - intel_pstate=no_hwp
+  cpu:
+    isolated: {{ .Values.spec.cpu.isolated }}
+    reserved: {{ .Values.spec.cpu.reserved }}
+  hugepages:
+    defaultHugepagesSize: {{ .Values.spec.hugepages.defaultHugepagesSize }}
+    pages:
+      - count: {{ .Values.spec.hugepages.pages.count }}
+        size: {{ .Values.spec.hugepages.pages.size }}
+  machineConfigPoolSelector:
+    pools.operator.machineconfiguration.openshift.io/master: ""
+  net:
+    userLevelNetworking: {{ .Values.spec.net.userLevelNetworking }}
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
+  numa:
+    topologyPolicy: {{ .Values.spec.numa.topologyPolicy }}
+  realTimeKernel:
+    enabled: {{ .Values.spec.realTimeKernel.enabled }}
