@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: common-clo
+  namespace: openshift-gitops
+spec:
+  generators:
+  - list:
+      # Parameters are generated based on this cluster list, to be substituted
+      # into the template below.
+      elements:
+      - cluster: du-sno-3
+        url: https://api.du-sno-3.domain.example.com:6443
+      - cluster: du-sno-2
+        url: https://api.du-sno-2.domain.example.com:6443
+      - cluster: cu-compact-1
+        url: https://kubernetes.default.svc
+  template:
+    # An Argo CD Application template, with support for parameter substitution
+    # with values from parameters generated above.
+    metadata:
+      name: '{{cluster}}-common-clo'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/vhernandomartin/gitops-blueprints-orchestration.git
+        targetRevision: HEAD
+        path: resources/operators/openshift-cluster-logging-operator
+        helm:
+          valueFiles:
+            - values.yaml
+      destination:
+        server: '{{url}}'
+        namespace: openshift-logging
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
