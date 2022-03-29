@@ -1,5 +1,6 @@
 # gitops-blueprints-orchestration
 - [gitops-blueprints-orchestration](#gitops-blueprints-orchestration)
+- [Disclaimer](#disclaimer)
 - [Introduction](#introduction)
 - [Pre-requisites](#pre-requisites)
   - [ArgoCD](#argocd)
@@ -28,6 +29,12 @@
   - [Deploy Operators in multiple clusters](#deploy-operators-in-multiple-clusters)
 - [RHACM](#rhacm)
   - [Deploying RHACM](#deploying-rhacm)
+
+# Disclaimer
+
+> :warning:
+> This tool is not supported by Red Hat, this has been prepared for testing, standarization and automation purposes within our internal labs.
+> Use it at your own risk.
 
 # Introduction
 
