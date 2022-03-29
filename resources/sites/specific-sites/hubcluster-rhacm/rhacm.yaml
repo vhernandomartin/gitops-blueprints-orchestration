@@ -1,0 +1,36 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rhacm-deploy
+  namespace: openshift-gitops
+spec:
+  # The argocd project the application belongs to
+  project: default
+  destination:
+    name: in-cluster
+  # Source of the application manifests
+  source:
+    repoURL: https://github.com/vhernandomartin/gitops-blueprints-orchestration.git
+    targetRevision: HEAD
+    path: resources/operators/open-cluster-management
+    helm:
+      valueFiles:
+        - values.yaml
+  # Sync policy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      # (equivalent to 'kubectl apply --validate=true')
+      - Validate=false
+      - CreateNamespace=true
+    retry:
+      # unlimited if less than 0
+      limit: -1
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
