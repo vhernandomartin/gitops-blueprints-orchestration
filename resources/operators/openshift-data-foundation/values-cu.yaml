@@ -1,0 +1,11 @@
+spec:
+  storageDeviceSets:
+    count: 1
+    replica: 3
+    resources:
+      limits:
+        cpu: 2
+        memory: 5Gi
+      requests:
+        cpu: 1
+        memory: 5Gi

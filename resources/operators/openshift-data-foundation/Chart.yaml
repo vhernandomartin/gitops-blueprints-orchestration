@@ -1,0 +1,6 @@
+apiVersion: v2
+name: openshift-data-foundation
+description: OpenShift Data Foundation operator Helm Chart
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

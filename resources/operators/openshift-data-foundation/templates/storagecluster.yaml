@@ -1,0 +1,96 @@
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "8"
+  name: ocs-storagecluster
+  namespace: openshift-storage
+spec:
+  monDataDirHostPath: /var/lib/rook
+  arbiter: {}
+  encryption:
+    kms: {}
+  externalStorage: {}
+  managedResources:
+    cephBlockPools: {}
+    cephConfig: {}
+    cephDashboard: {}
+    cephFilesystems: {}
+    cephObjectStoreUsers: {}
+    cephObjectStores: {}
+  nodeTopologies: {}
+  placement:
+    all:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node.ocs.openshift.io/storage
+          effect: NoSchedule
+          operator: Equal
+          value: "true"
+    mds:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node.ocs.openshift.io/storage
+          effect: NoSchedule
+          operator: Equal
+          value: "true"
+    noobaa-core:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node.ocs.openshift.io/storage
+          effect: NoSchedule
+          operator: Equal
+          value: "true"
+    rgw:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node.ocs.openshift.io/storage
+          effect: NoSchedule
+          operator: Equal
+          value: "true"
+  resources:
+    mds:
+      limits:
+        cpu: "3"
+        memory: 8Gi
+      requests:
+        cpu: "1"
+        memory: 8Gi
+    rgw:
+      limits:
+        cpu: "2"
+        memory: 4Gi
+      requests:
+        cpu: "1"
+        memory: 4Gi
+  storageDeviceSets:
+    - config: {}
+      count: {{ .Values.spec.storageDeviceSets.count }}
+      dataPVCTemplate:
+        metadata: {}
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1
+          storageClassName: lso-sc
+          volumeMode: Block
+        status: {}
+      name: ocs-deviceset-lso-sc
+      placement: {}
+      preparePlacement: {}
+      replica: {{ .Values.spec.storageDeviceSets.replica }}
+      resources:
+        limits:
+          cpu: {{ .Values.spec.storageDeviceSets.resources.limits.cpu }}
+          memory: {{ .Values.spec.storageDeviceSets.resources.limits.memory }}
+        requests:
+          cpu: {{ .Values.spec.storageDeviceSets.resources.requests.cpu }}
+          memory: {{ .Values.spec.storageDeviceSets.resources.requests.memory }}
+  version: 4.9.0
