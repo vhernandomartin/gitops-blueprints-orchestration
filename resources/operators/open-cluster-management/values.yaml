@@ -1,0 +1,6 @@
+spec:
+  channel: release-2.4
+  logLevel: debug
+  clusterImageSet:
+    name: openshift-v4.9.12
+    releaseImage: registry.domain.example.com:5000/ocp4:4.9-x86_64

@@ -1,0 +1,29 @@
+apiVersion: agent-install.openshift.io/v1beta1
+kind: AgentServiceConfig
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "12"
+  name: agent
+  namespace: open-cluster-management
+spec:
+  databaseStorage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 50Gi
+  filesystemStorage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 200Gi
+  mirrorRegistryRef:
+    name: "spoke-mirror-config"
+  osImages:
+    - openshiftVersion: "4.9"
+      version: "49.84.202110081407-0"
+      url: "http://10.1.1.20/rhcos-49.84.202110081407-0-live.x86_64.iso"
+      rootFSUrl: "http://10.1.1.20/rhcos-49.84.202110081407-0-live-rootfs.x86_64.img"
+      cpuArchitecture: "x86_64"

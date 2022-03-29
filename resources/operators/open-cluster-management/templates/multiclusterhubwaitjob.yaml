@@ -1,0 +1,40 @@
+---
+#
+# Wait for multiclusterhub instance to be ready to continue
+#
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+  name: multiclusterhub-wait-job
+  namespace: openshift-gitops
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.redhat.io/openshift4/ose-cli:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "ArgoCD PostSync Hook"
+              CSV_STATUS="Pausing $SLEEP seconds..."
+              while [ "$CSV_STATUS" != "Running" ]; do
+                echo "Waiting for the multiclusterhub instance to be running. ($CSV_STATUS)"
+                sleep $SLEEP
+                CSV_STATUS=$( oc -n open-cluster-management get multiclusterhub multiclusterhub -o jsonpath={.status.phase} )
+              done
+              echo "All done! Hooray!"
+          imagePullPolicy: IfNotPresent
+          name: mch-wait-job
+          env:
+          - name: SLEEP
+            value: "20"
+      dnsPolicy: ClusterFirst
+      restartPolicy: OnFailure
+      serviceAccount: cli-job-sa
+      serviceAccountName: cli-job-sa
+      terminationGracePeriodSeconds: 30
