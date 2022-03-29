@@ -1,0 +1,4 @@
+spec:
+  disableDrain: true
+  enableInjector: true
+  enableOperatorWebhook: true
